@@ -5,3 +5,5 @@ azure-mgmt-resource
 pyyaml
 pytest
 ruff
+pandas
+numpy
