@@ -1,7 +1,20 @@
 import ipaddress
-from .models import *
-from .anomaly_detector import flatten_ports
+
 import pandas as pd
+
+from .models import *
+
+
+def flatten_ports(port_str: str) -> set[int]:
+    ports = set()
+    for part in port_str.split(","):
+        part = part.strip()
+        if "-" in part:
+            start, end = map(int, part.split("-"))
+            ports.update(range(start, end + 1))
+        else:
+            ports.add(int(part))
+    return ports
 
 def protocol_code(p: SecurityProtocol | None) -> int:
     if p == SecurityProtocol.ASTERISK:

@@ -1,6 +1,12 @@
 import ipaddress
+
+import pandas as pd
+from sklearn.ensemble import IsolationForest
+
 from .rule_engine import CheckResult
 from .models import NetworkSecurityGroup, SecurityProtocol, SecurityRule
+from .features import build_feature_dataframe, flatten_ports
+
 
 def _cidr_covers(a:str | None, b:str| None)-> bool:
     if a is None or b is None:
@@ -15,18 +21,6 @@ def _cidr_covers(a:str | None, b:str| None)-> bool:
         return net_a.supernet_of(net_b)
     except ValueError:
         return False
-
-def flatten_ports(port_str: str) -> set[int]:
-    ports = set()
-    for part in port_str.split(","):
-        part = part.strip()
-        if "-" in part:
-            start, end = map(int, part.split("-"))
-            ports.update(range(start, end + 1))
-        else:
-            ports.add(int(part))
-    return ports
-
 
 def _port_covers(a:str | None, b:str| None)-> bool:
     if a is None or b is None:
@@ -72,11 +66,46 @@ def detect_shadowing(nsg:NetworkSecurityGroup):
 
     return results
 
+def detect_ml_anomalies(nsg: NetworkSecurityGroup) -> list[CheckResult]:
+    results: list[CheckResult] = []
+    df: pd.DataFrame = build_feature_dataframe(nsg)
+    if df.shape[0] < 8:
+        return []
+    df_clean = df.fillna(0)
+    model = IsolationForest(contamination=0.05, random_state=42, n_estimators=100)
+    predictions = model.fit_predict(df_clean)
+    anomaly_scores = model.score_samples(df_clean)
+    scores_series = pd.Series(anomaly_scores)
+    for i, prediction in enumerate(predictions):
+        if prediction == -1:
+            rule = nsg.security_rules[i]
+            evidence_parts = [
+                f"Rule '{rule.name}' is statistically unusual compared to other rules in NSG '{nsg.name}'."
+            ]
+            rule_vector = df_clean.iloc[i]
+            mean_vector = df_clean.mean()
+            differences = (rule_vector - mean_vector).abs()
+            top_features = differences.nlargest(3).index.tolist()
+            evidence_parts.append(
+                f"Top reasons: {', '.join(top_features)} differ significantly from the NSG average."
+            )
+            results.append(CheckResult(
+                control_id="ANOMALY",
+                status="fail",
+                severity="Medium",
+                nsg_name=nsg.name,
+                rule_name=rule.name,
+                evidence=" | ".join(evidence_parts)
+            ))
+    return results
+
+
 def run_anomaly_detection(nsgs: list[NetworkSecurityGroup]) -> list[CheckResult]:
     results: list[CheckResult] = []
     for nsg in nsgs:
         results.extend(detect_shadowing(nsg))
         results.extend(detect_redundancy(nsg))
+        results.extend(detect_ml_anomalies(nsg))
     return results
 
 def detect_redundancy(nsg:NetworkSecurityGroup):
