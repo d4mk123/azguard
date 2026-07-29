@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from azguardian.collector import collect_from_file, collect_flow_logs_from_file
-from azguardian.rule_engine import (
+from azguard.collector import collect_from_file, collect_flow_logs_from_file
+from azguard.rule_engine import (
     run_engine,
     check_overly_broad_service_tags,
     check_missing_asgs,

@@ -9,3 +9,7 @@ pandas
 numpy
 scikit-learn
 ollama
+jinja2
+matplotlib
+weasyprint
+Jinja2

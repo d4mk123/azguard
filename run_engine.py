@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from azguardian.collector import collect_from_file
-from azguardian.rule_engine import run_engine
+from azguard.collector import collect_from_file
+from azguard.rule_engine import run_engine
 
 FIXTURES_DIR = Path("test-data")
 
