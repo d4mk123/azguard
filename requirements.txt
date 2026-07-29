@@ -7,3 +7,5 @@ pytest
 ruff
 pandas
 numpy
+scikit-learn
+ollama

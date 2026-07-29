@@ -1,0 +1,241 @@
+{
+  "value": [
+    {
+      "name": "one-weird-nsg",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Network/networkSecurityGroups/one-weird-nsg",
+      "location": "eastus",
+      "tags": {},
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "properties": {
+        "provisioningState": "Succeeded",
+        "resourceGuid": "abc123",
+        "securityRules": [
+          {
+            "name": "SSH-Corp",
+            "id": "/subscriptions/.../securityRules/SSH-Corp",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule SSH-Corp",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "10.0.0.0/8",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "RDP-Corp",
+            "id": "/subscriptions/.../securityRules/RDP-Corp",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule RDP-Corp",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "10.0.0.0/8",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "HTTPS-App",
+            "id": "/subscriptions/.../securityRules/HTTPS-App",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule HTTPS-App",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "10.1.0.0/16",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "HTTP-App",
+            "id": "/subscriptions/.../securityRules/HTTP-App",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule HTTP-App",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "10.1.0.0/16",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "DB-MySQL",
+            "id": "/subscriptions/.../securityRules/DB-MySQL",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule DB-MySQL",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3306",
+              "sourceAddressPrefix": "10.2.0.0/16",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 140,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "DB-MSSQL",
+            "id": "/subscriptions/.../securityRules/DB-MSSQL",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule DB-MSSQL",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "1433",
+              "sourceAddressPrefix": "10.2.0.0/16",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 150,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "DNS-Internal",
+            "id": "/subscriptions/.../securityRules/DNS-Internal",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule DNS-Internal",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "53",
+              "sourceAddressPrefix": "10.0.0.0/8",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 160,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "LDAP",
+            "id": "/subscriptions/.../securityRules/LDAP",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule LDAP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "389",
+              "sourceAddressPrefix": "10.0.0.0/8",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 170,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Redis",
+            "id": "/subscriptions/.../securityRules/Redis",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule Redis",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "6379",
+              "sourceAddressPrefix": "10.3.0.0/16",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 180,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Monitoring",
+            "id": "/subscriptions/.../securityRules/Monitoring",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule Monitoring",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "9090",
+              "sourceAddressPrefix": "10.0.0.0/8",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 190,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Weird-UDP-All",
+            "id": "/subscriptions/.../securityRules/Weird-UDP-All",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Rule Weird-UDP-All",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "0.0.0.0/0",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 200,
+              "direction": "Inbound"
+            }
+          }
+        ],
+        "defaultSecurityRules": [
+          {
+            "name": "AllowVnetInBound",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 65000,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "AllowAzureLoadBalancerInBound",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "AzureLoadBalancer",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 65001,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "DenyAllInBound",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 65500,
+              "direction": "Inbound"
+            }
+          }
+        ],
+        "subnets": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet-a",
+            "name": "subnet-a"
+          }
+        ],
+        "networkInterfaces": []
+      }
+    }
+  ]
+}
