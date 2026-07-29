@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from azguardian.collector import collect_from_file
-from azguardian.anomaly_detector import (
+from azguard.collector import collect_from_file
+from azguard.anomaly_detector import (
     detect_shadowing,
     detect_redundancy,
     run_anomaly_detection,

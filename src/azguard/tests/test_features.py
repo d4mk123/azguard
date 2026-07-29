@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from azguardian.collector import collect_from_file
-from azguardian.models import (
+from azguard.collector import collect_from_file
+from azguard.models import (
     SecurityProtocol,
     SecurityDirection,
     SecurityAccess,
     SecurityRule,
 )
-from azguardian.features import (
+from azguard.features import (
     protocol_code,
     direction_code,
     access_code,

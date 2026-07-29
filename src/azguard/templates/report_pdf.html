@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AzGuard — NSG Compliance Report</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: #000;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+@page {
+  size: A4;
+  margin: 1.8cm 1.8cm 2.2cm 1.8cm;
+  @bottom-center {
+    content: "AzGuard  |  Page " counter(page) " of " counter(pages);
+    font-size: 8px;
+    color: #888;
+  }
+}
+@page:first { @bottom-center { content: none; } }
+
+h1 { font-size: 20px; margin-bottom: 4px; }
+h2 { font-size: 14px; margin: 20px 0 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+h3 { font-size: 12px; margin: 14px 0 6px; }
+
+.cover {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 95vh; text-align: center;
+  page-break-after: always;
+}
+.cover h1 { font-size: 28px; margin-bottom: 6px; }
+.cover .sub { font-size: 14px; color: #555; margin-bottom: 20px; }
+.cover .meta { margin-top: 10px; font-size: 12px; color: #333; }
+.cover .meta div { margin: 4px 0; }
+.cover .footer { margin-top: 40px; font-size: 9px; color: #999; }
+
+table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 10px; }
+th { background: #f0f0f0; padding: 6px 6px; text-align: left; font-weight: 700; border-bottom: 1px solid #ccc; }
+td { padding: 5px 6px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+
+.page-break { page-break-before: always; }
+
+.nsg-list { margin: 6px 0; }
+.nsg-entry { padding: 6px 8px; margin: 4px 0; border-left: 3px solid #999; }
+.nsg-entry.pass { border-left-color: #27ae60; }
+.nsg-entry.fail { border-left-color: #c0392b; }
+.nsg-entry.manual { border-left-color: #d68910; }
+.nsg-entry.global { border-left-color: #4a6fa5; }
+.nsg-entry .name { font-weight: 700; font-size: 11px; }
+.nsg-entry .detail { font-size: 10px; color: #555; }
+
+.anomaly-item { padding: 6px 8px; margin: 4px 0; border-left: 3px solid #6c3483; }
+.anomaly-item .title { font-weight: 700; }
+.anomaly-item .desc { font-size: 10px; color: #444; }
+
+.narrative { margin: 8px 0; padding: 10px; border: 1px solid #ccc; font-size: 10px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>AzGuard</h1>
+  <div class="sub">Azure NSG Compliance Report</div>
+  <div class="meta">
+    <div><strong>Scan Date:</strong> {{ timestamp }}</div>
+    <div><strong>NSGs Scanned:</strong> {{ nsg_count }}</div>
+    <div><strong>Security Rules:</strong> {{ total_rules }}</div>
+    <div><strong>Checks Performed:</strong> {{ summary.total }}</div>
+  </div>
+  <div class="footer">CIS Microsoft Azure Foundations Benchmark v3.0.0</div>
+</div>
+
+<h2>Executive Summary</h2>
+
+<table>
+  <tr><th>Total Checks</th><td>{{ summary.total }}</td></tr>
+  <tr><th>Passed</th><td>{{ summary.pass }}</td></tr>
+  <tr><th>Failed</th><td>{{ summary.fail }}</td></tr>
+  <tr><th>Manual Check</th><td>{{ summary.manual }}</td></tr>
+</table>
+
+{% if chart_donut or chart_severity %}
+<div style="text-align:center;margin:10px 0;">
+  {% if chart_donut %}
+  <img src="{{ chart_donut }}" alt="" style="width:160px;">
+  {% endif %}
+  {% if chart_severity %}
+  <img src="{{ chart_severity }}" alt="" style="width:280px;">
+  {% endif %}
+</div>
+{% endif %}
+
+<h2>Per-NSG Breakdown</h2>
+<div class="nsg-list">
+{% for nsg in nsg_breakdown %}
+  <div class="nsg-entry {% if nsg.is_global %}global{% elif nsg.fail > 0 %}fail{% elif nsg.manual > 0 %}manual{% else %}pass{% endif %}">
+    <div class="name">{{ nsg.name }}</div>
+    <div class="detail">{{ nsg.location }} &mdash; Pass: {{ nsg.pass }}, Fail: {{ nsg.fail }}, Manual: {{ nsg.manual }}</div>
+    {% if nsg.top_issue %}<div class="detail">{{ nsg.top_issue }}</div>{% endif %}
+  </div>
+{% endfor %}
+</div>
+
+<h2 class="page-break">Findings Detail</h2>
+
+{% if findings %}
+<table>
+  <thead>
+    <tr>
+      <th>Control</th>
+      <th>Status</th>
+      <th>Severity</th>
+      <th>NSG</th>
+      <th>Rule</th>
+      <th>Evidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for f in findings %}
+    <tr>
+      <td>{{ f.control_id }}</td>
+      <td>{{ f.status|upper }}</td>
+      <td>{{ f.severity }}</td>
+      <td>{{ f.nsg_name }}</td>
+      <td>{{ f.rule_name if f.rule_name else '—' }}</td>
+      <td>{{ f.evidence }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if findings_extra %}
+<h3>Additional Checks</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Severity</th>
+      <th>NSG</th>
+      <th>Rule</th>
+      <th>Evidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for f in findings_extra %}
+    <tr>
+      <td>{{ f.status|upper }}</td>
+      <td>{{ f.severity }}</td>
+      <td>{{ f.nsg_name }}</td>
+      <td>{{ f.rule_name if f.rule_name else '—' }}</td>
+      <td>{{ f.evidence }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Anomaly Detection</h2>
+{% if anomalies %}
+  {% for a in anomalies %}
+  <div class="anomaly-item">
+    <div class="title">{{ a.rule_name }}</div>
+    <div class="detail" style="font-size:10px;color:#777;">{{ a.nsg_name }}</div>
+    <div class="desc">{{ a.evidence }}</div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p style="color:#666;font-size:10px;">No anomalous rules detected.</p>
+{% endif %}
+
+<h2>AI-Generated Narrative</h2>
+<div class="narrative">{{ llm_narrative }}</div>
+
+</body>
+</html>
