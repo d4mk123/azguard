@@ -2,7 +2,13 @@ import ipaddress
 
 import pandas as pd
 
-from .models import *
+from .models import (
+    NetworkSecurityGroup,
+    SecurityAccess,
+    SecurityDirection,
+    SecurityProtocol,
+    SecurityRule,
+)
 
 
 def flatten_ports(port_str: str) -> set[int]:

@@ -1,3 +1,4 @@
+import pytest
 from pathlib import Path
 
 from azguard.collector import collect_from_file, collect_flow_logs_from_file
@@ -175,3 +176,29 @@ def test_vnet_flow_log_retention_returns_manual_when_no_vnet_logs():
     flow_logs = collect_flow_logs("flow-logs.json")
     results = check_vnet_flow_log_retention(nsgs, flow_logs)
     assert all(r.status == "manual" for r in results)
+
+
+def test_duplicate_priority_no_crash():
+    nsgs = collect("duplicate-priority.json")
+    results = run_engine(nsgs)
+    assert isinstance(results, list)
+    assert len(results) > 0
+
+
+def test_ipv6_rules_no_crash():
+    nsgs = collect("ipv6-rules.json")
+    results = run_engine(nsgs)
+    assert isinstance(results, list)
+    assert len(results) > 0
+
+
+def test_ipv6_rules_not_falsely_flagged_as_internet():
+    nsgs = collect("ipv6-rules.json")
+    results = run_engine(nsgs)
+    rdp_ssh_fails = [r for r in results if r.control_id in ("7.1", "7.2") and r.status == "fail"]
+    assert len(rdp_ssh_fails) == 0
+
+
+def test_malformed_export_raises_error():
+    with pytest.raises(Exception):
+        collect_from_file(FIXTURES_DIR / "malformed-export.json")

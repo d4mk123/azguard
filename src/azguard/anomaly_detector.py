@@ -74,8 +74,6 @@ def detect_ml_anomalies(nsg: NetworkSecurityGroup) -> list[CheckResult]:
     df_clean = df.fillna(0)
     model = IsolationForest(contamination=0.05, random_state=42, n_estimators=100)
     predictions = model.fit_predict(df_clean)
-    anomaly_scores = model.score_samples(df_clean)
-    scores_series = pd.Series(anomaly_scores)
     for i, prediction in enumerate(predictions):
         if prediction == -1:
             rule = nsg.security_rules[i]

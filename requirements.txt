@@ -8,8 +8,10 @@ ruff
 pandas
 numpy
 scikit-learn
+streamlit
 ollama
 jinja2
 matplotlib
 weasyprint
 Jinja2
+streamlit

@@ -1,8 +1,6 @@
 import json
 from typing import Any
 
-from ollama import chat
-
 from .rule_engine import CheckResult
 
 SYSTEM_PROMPT = (
@@ -68,8 +66,10 @@ def build_prompt(findings_json: str) -> str:
 
 def generate_report(
     results: list[CheckResult],
-    model_name: str = "llama3.2:3b",
+    model_name: str = "qwen2.5:7b-instruct",
 ) -> str:
+    from ollama import chat
+
     findings_json = findings_to_json(results)
     prompt = build_prompt(findings_json)
     response = chat(

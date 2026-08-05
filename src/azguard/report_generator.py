@@ -86,6 +86,15 @@ def _render_html(
 
     summary_pfm = {"pass": summary["pass"], "fail": summary["fail"], "manual": summary["manual"]}
 
+    try:
+        chart_donut = donut_chart(summary_pfm)
+    except Exception:
+        chart_donut = ""
+    try:
+        chart_severity = severity_bar_chart(summary["by_severity"])
+    except Exception:
+        chart_severity = ""
+
     findings_cis = [f for f in findings if f["control_id"] != "N/A"]
     findings_extra = [f for f in findings if f["control_id"] == "N/A"]
 
@@ -98,8 +107,8 @@ def _render_html(
         findings=findings_cis,
         findings_extra=findings_extra,
         anomalies=anomalies,
-        chart_donut=donut_chart(summary_pfm),
-        chart_severity=severity_bar_chart(summary["by_severity"]),
+        chart_donut=chart_donut,
+        chart_severity=chart_severity,
         llm_narrative=llm_narrative or "No AI narrative generated.",
     )
 
