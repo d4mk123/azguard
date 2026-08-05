@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azguard"
+version = "0.1.0"
+description = "Azure NSG CIS Compliance Analyzer"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "azure-identity",
+    "azure-mgmt-network",
+    "azure-mgmt-resource",
+    "pyyaml",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "streamlit>=1.40",
+    "jinja2",
+    "matplotlib",
+    "weasyprint",
+    "typer>=0.12"
+]
+
+[project.scripts]
+azguard = "azguard.cli:app"
+
+[project.optional-dependencies]
+llm = ["ollama"]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["src/azguard/tests"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+azguard = ["templates/*.html"]

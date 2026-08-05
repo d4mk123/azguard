@@ -1,6 +1,8 @@
 import base64
 from io import BytesIO
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
@@ -18,7 +20,7 @@ def _fig_to_data_uri(fig: plt.Figure) -> str:
     return f"data:image/png;base64,{data}"
 
 
-def donut_chart(summary: dict) -> str:
+def donut_fig(summary: dict) -> plt.Figure:
     labels = []
     sizes = []
     colors = []
@@ -35,7 +37,7 @@ def donut_chart(summary: dict) -> str:
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.axis("off")
-        return _fig_to_data_uri(fig)
+        return fig
 
     fig, ax = plt.subplots(figsize=(2.5, 2.5))
     wedges, texts = ax.pie(
@@ -51,12 +53,16 @@ def donut_chart(summary: dict) -> str:
     ax.text(0, 0, str(total), ha="center", va="center", fontsize=20, fontweight="bold", color="#2c3e50")
     ax.text(0, -0.18, "total", ha="center", va="center", fontsize=8, color="#7f8c8d")
     ax.axis("equal")
-    legend_labels = [f"{l} ({s})" for l, s in zip(labels, sizes)]
+    legend_labels = [f"{label} ({s})" for label, s in zip(labels, sizes)]
     ax.legend(wedges, legend_labels, loc="center left", bbox_to_anchor=(1, 0.5), frameon=False, fontsize=8)
-    return _fig_to_data_uri(fig)
+    return fig
 
 
-def severity_bar_chart(by_severity: dict) -> str:
+def donut_chart(summary: dict) -> str:
+    return _fig_to_data_uri(donut_fig(summary))
+
+
+def severity_bar_fig(by_severity: dict) -> plt.Figure:
     labels = []
     values = []
     colors = []
@@ -73,7 +79,7 @@ def severity_bar_chart(by_severity: dict) -> str:
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.axis("off")
-        return _fig_to_data_uri(fig)
+        return fig
 
     fig, ax = plt.subplots(figsize=(4, 1.6))
     bars = ax.barh(labels, values, color=colors, height=0.55, edgecolor="white", linewidth=1)
@@ -91,4 +97,8 @@ def severity_bar_chart(by_severity: dict) -> str:
     for spine in ax.spines.values():
         spine.set_visible(False)
     ax.tick_params(left=False)
-    return _fig_to_data_uri(fig)
+    return fig
+
+
+def severity_bar_chart(by_severity: dict) -> str:
+    return _fig_to_data_uri(severity_bar_fig(by_severity))

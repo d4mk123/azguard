@@ -23,7 +23,7 @@ class CheckResult(BaseModel):
 # Helper functions
 
 def _is_internet(source: str | None) -> bool:
-    if source in ["*", "Internet", "0.0.0.0/0"]:
+    if source in ["*", "Internet", "0.0.0.0/0", "::/0"]:
         return True
     return False
 

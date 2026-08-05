@@ -169,7 +169,7 @@ controls:
     title: "Ensure that Network Watcher is Enabled for Azure Regions That are in Use"
     section: "Networking Services"
     level: 2
-    automated: true
+    automated: false
     description: >
       Enable Network Watcher for physical regions in Azure subscriptions. Network Watcher
       is a prerequisite for NSG flow logs, VNet flow logs, and network diagnostics.
@@ -185,7 +185,7 @@ controls:
     title: "Ensure that Virtual Network Flow Log Retention Days is Set to Greater than or Equal to 90"
     section: "Networking Services"
     level: 2
-    automated: true
+    automated: false
     description: >
       Ensure that virtual network flow logs are retained for greater than or equal to 90 days.
       This is the successor to NSG flow logs.

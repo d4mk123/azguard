@@ -18,6 +18,17 @@ def collect_from_file(path: str | Path) -> list[NetworkSecurityGroup]:
     return result.value
 
 
+def collect_from_bytes(data: bytes) -> list[NetworkSecurityGroup]:
+    """
+    Load NSGs from raw JSON bytes, e.g. a Streamlit file upload.
+    Accepts either a bare list or an ARM-style {'value': [...]} payload.
+    """
+    parsed = json.loads(data)
+    if isinstance(parsed, list):
+        parsed = {'value': parsed}
+    return NSGListResult.model_validate(parsed).value
+
+
 def collect_from_azure(subscription_id: str) -> list[NetworkSecurityGroup]:
     """
     Load NSGs live from an Azure subscription.
@@ -43,3 +54,10 @@ def collect_flow_logs_from_file(path: str | Path) -> list[FlowLog]:
 
     result = FlowLogListResult.model_validate(data)
     return result.value
+
+
+def collect_flow_logs_from_bytes(data: bytes) -> list[FlowLog]:
+    parsed = json.loads(data)
+    if isinstance(parsed, list):
+        parsed = {'value': parsed}
+    return FlowLogListResult.model_validate(parsed).value
