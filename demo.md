@@ -102,9 +102,8 @@ local model.
 > (rule-pair analysis + Isolation Forest), and a locally-hosted LLM that writes
 > plain-English remediation guidance — all running locally with no paid API keys.
 > Delivered as a Typer CLI, a Streamlit dashboard, and HTML/PDF reports. Tested with
-> a 99-test suite and validated against Microsoft Defender for Cloud's CIS
-> compliance assessments on a Terraform-provisioned test environment. Built over a
-> 21-day solo plan (see `azure_new_plan.md`).
+> a 100-test suite and validated against Microsoft Defender for Cloud's CIS
+> compliance assessments on a Terraform-provisioned test environment.
 
 ---
 

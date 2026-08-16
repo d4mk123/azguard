@@ -214,19 +214,18 @@ If Ollama is unavailable, azguard skips the narrative and still produces the rep
 
 > **Executive Summary**
 >
-> The security scan of our Azure Network Security Groups (NSGs) has identified
+> The security scan of your Azure Network Security Groups (NSGs) has identified
 > 19 findings across various severities. The majority of these findings are
-> classified as Critical or Medium, indicating a significant risk to our network
-> security posture. The most critical issue is the exposure of non-web ports
-> (3389 and 22) to the internet through the "violation-nsg" NSG.
+> classified as Critical or High, indicating significant security risks.
+> Specifically, the most critical issue is that the NSG "violation-nsg" has
+> inbound rules allowing RDP and SSH traffic from the internet to non-web ports
+> (3389 and 22). This exposes sensitive services to external threats.
 
-> **1. Control ID: 7.1** — *NSG 'violation-nsg' has an inbound rule 'RDP'
-> allowing Tcp traffic from the internet to ports 3389, exposing RDP to the
-> Internet.*
-> - **Risk:** This opens up our network to potential RDP brute-force attacks and
->   unauthorized access.
-> - **Fix:** `az network nsg rule update --name "RDP" --nsg-name "violation-nsg"
->   --destination-port 0 --protocol Tcp --action Allow --priority 100`
+> **7.1** — *The NSG "violation-nsg" has an inbound rule 'RDP' allowing Tcp
+> traffic from the internet to port 3389, exposing RDP to Internet.*
+> - **Risk:** Allows unauthorized access to sensitive services via RDP.
+> - **Fix:** `az network nsg update --name violation-nsg
+>   --default-secure-traffic-filtering-level Secure`
 
 The narrative only references findings the scan actually produced — the model is
 explicitly instructed not to invent issues.
@@ -251,7 +250,6 @@ AZURE_SUBSCRIPTION_ID
 ## Project layout
 
 ```
-├── azure_new_plan.md          # project roadmap
 ├── control-mapping.yaml       # CIS control definitions
 ├── pyproject.toml             # package metadata and dependencies
 ├── requirements.txt
@@ -260,7 +258,7 @@ AZURE_SUBSCRIPTION_ID
 ├── run_dashboard.py           # Streamlit launcher
 ├── scripts/screenshots.py     # regenerate the README screenshots (Playwright)
 ├── docs/screenshots/          # README screenshots
-├── test-data/                 # 17 sample NSG exports (violations and edge cases)
+├── test-data/                 # 18 sample NSG exports (violations and edge cases)
 ├── terraform/                 # live validation environment (intentionally misconfigured)
 ├── validation/                # azguard ↔ Defender for Cloud comparison tooling
 └── src/azguard/
@@ -318,4 +316,3 @@ MIT — see [LICENSE](LICENSE).
   output and a before/after narrative.
 - **Live validation:** [`validation/README.md`](validation/README.md) — comparison
   tooling against Microsoft Defender for Cloud (provisioning pending Azure access).
-- **Roadmap:** [`azure_new_plan.md`](azure_new_plan.md) — the 21-day solo plan.

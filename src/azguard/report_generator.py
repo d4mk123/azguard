@@ -81,6 +81,16 @@ def _build_nsg_breakdown(
     return breakdown
 
 
+def _render_markdown(text: str) -> str:
+    if not text:
+        return ""
+    try:
+        import markdown
+    except ImportError:
+        return text
+    return markdown.markdown(text, extensions=["extra"])
+
+
 def _render_html(
     results: list[CheckResult],
     llm_narrative: str,
@@ -113,6 +123,8 @@ def _render_html(
     findings_cis = [f for f in findings if f["control_id"] != "N/A"]
     findings_extra = [f for f in findings if f["control_id"] == "N/A"]
 
+    narrative_html = _render_markdown(llm_narrative or "No AI narrative generated.")
+
     return template.render(
         timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         nsg_count=len(nsgs or []),
@@ -124,7 +136,7 @@ def _render_html(
         anomalies=anomalies,
         chart_donut=chart_donut,
         chart_severity=chart_severity,
-        llm_narrative=llm_narrative or "No AI narrative generated.",
+        llm_narrative=narrative_html,
     )
 
 

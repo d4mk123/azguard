@@ -27,10 +27,11 @@ dependencies = [
 azguard = "azguard.cli:app"
 
 [project.optional-dependencies]
-llm = ["ollama"]
+llm = ["ollama", "Markdown"]
 dev = [
     "pytest",
     "ruff",
+    "playwright",
 ]
 
 [tool.pytest.ini_options]

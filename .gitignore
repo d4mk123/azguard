@@ -5,4 +5,5 @@ venv/
 *.tfstate
 *.tfstate.backup
 .terraform/
+*.egg-info/
 
