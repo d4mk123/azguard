@@ -37,14 +37,16 @@ def run_scan(nsg_bytes: bytes, flow_bytes: bytes | None, model: str, use_llm: bo
 def _result_rows(results) -> list[dict]:
     rows = []
     for r in results:
-        rows.append({
-            "Control": r.control_id,
-            "Status": r.status,
-            "Severity": r.severity,
-            "NSG": r.nsg_name,
-            "Rule": r.rule_name or "",
-            "Evidence": r.evidence,
-        })
+        rows.append(
+            {
+                "Control": r.control_id,
+                "Status": r.status,
+                "Severity": r.severity,
+                "NSG": r.nsg_name,
+                "Rule": r.rule_name or "",
+                "Evidence": r.evidence,
+            }
+        )
     return rows
 
 
@@ -101,7 +103,9 @@ def main() -> None:
         st.session_state["scanned"] = True
 
     if not st.session_state.get("scanned"):
-        st.info("Upload an NSG JSON fixture (e.g. test-data/violation-nsg.json) and click Run scan.")
+        st.info(
+            "Upload an NSG JSON fixture (e.g. test-data/violation-nsg.json) and click Run scan."
+        )
         st.stop()
 
     nsgs = st.session_state["nsgs"]
@@ -145,7 +149,9 @@ def main() -> None:
     f_sev = st.multiselect("Severity", SEVERITIES, default=SEVERITIES)
     filtered = [r for r in findings if r.status in f_status and r.severity in f_sev]
     if filtered:
-        st.dataframe(pd.DataFrame(_result_rows(filtered)), width="stretch", hide_index=True)
+        st.dataframe(
+            pd.DataFrame(_result_rows(filtered)), width="stretch", hide_index=True
+        )
     else:
         st.caption("No findings match the current filters.")
 
@@ -153,8 +159,12 @@ def main() -> None:
 
     st.subheader("Anomalies")
     if anomalies:
-        st.dataframe(pd.DataFrame(_result_rows(anomalies)), width="stretch", hide_index=True)
-        st.caption("Shadowed/redundant rule pairs and statistically unusual rules (Isolation Forest).")
+        st.dataframe(
+            pd.DataFrame(_result_rows(anomalies)), width="stretch", hide_index=True
+        )
+        st.caption(
+            "Shadowed/redundant rule pairs and statistically unusual rules (Isolation Forest)."
+        )
     else:
         st.caption("No anomalies detected.")
 
@@ -164,12 +174,16 @@ def main() -> None:
     if narrative:
         st.markdown(narrative)
     else:
-        st.caption("No AI narrative yet. Click 'Regenerate AI summary' to generate one (requires Ollama).")
+        st.caption(
+            "No AI narrative yet. Click 'Regenerate AI summary' to generate one (requires Ollama)."
+        )
 
     if st.button("Regenerate AI summary", key="regenerate"):
         with st.spinner("Querying Ollama..."):
             try:
-                st.session_state["narrative"] = generate_report(results, model_name=model)
+                st.session_state["narrative"] = generate_report(
+                    results, model_name=model
+                )
             except Exception as e:
                 st.session_state["narrative"] = f"*(AI narrative unavailable: {e})*"
         st.rerun()

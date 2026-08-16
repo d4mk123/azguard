@@ -47,7 +47,9 @@ def test_collect_flow_logs_from_bytes():
 
 
 def test_run_scan_returns_expected_shape():
-    nsgs, results, narrative = run_scan(VIOLATION.read_bytes(), FLOW_LOGS.read_bytes(), "test-model", False)
+    nsgs, results, narrative = run_scan(
+        VIOLATION.read_bytes(), FLOW_LOGS.read_bytes(), "test-model", False
+    )
     assert isinstance(nsgs, list) and nsgs
     assert isinstance(results, list)
     assert results
@@ -56,7 +58,9 @@ def test_run_scan_returns_expected_shape():
 
 
 def test_report_bytes_exports():
-    nsgs, results, narrative = run_scan(VIOLATION.read_bytes(), FLOW_LOGS.read_bytes(), "test-model", False)
+    nsgs, results, narrative = run_scan(
+        VIOLATION.read_bytes(), FLOW_LOGS.read_bytes(), "test-model", False
+    )
     html = _report_bytes(results, narrative, nsgs, "html")
     pdf = _report_bytes(results, narrative, nsgs, "pdf")
     assert html.lstrip().startswith((b"<", b"<!doctype"))

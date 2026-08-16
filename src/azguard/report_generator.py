@@ -46,10 +46,15 @@ def _build_nsg_breakdown(
     nsgs: list[NetworkSecurityGroup] | None,
 ) -> list[dict]:
     nsg_map: dict[str, dict] = {}
-    for nsg in (nsgs or []):
-        nsg_map[nsg.name] = {"location": nsg.location, "rules_count": len(nsg.security_rules)}
+    for nsg in nsgs or []:
+        nsg_map[nsg.name] = {
+            "location": nsg.location,
+            "rules_count": len(nsg.security_rules),
+        }
 
-    by_nsg: dict[str, dict] = defaultdict(lambda: {"pass": 0, "fail": 0, "manual": 0, "top_issue": ""})
+    by_nsg: dict[str, dict] = defaultdict(
+        lambda: {"pass": 0, "fail": 0, "manual": 0, "top_issue": ""}
+    )
     for r in results:
         nsg_key = GLOBAL_NSG_LABEL if r.nsg_name in ("N/A", "", None) else r.nsg_name
         by_nsg[nsg_key][r.status] += 1
@@ -58,14 +63,20 @@ def _build_nsg_breakdown(
 
     breakdown = []
     for name, counts in by_nsg.items():
-        is_global = (name == GLOBAL_NSG_LABEL)
-        loc = "Cross-NSG / Tenant-level checks (see table)" if is_global else nsg_map.get(name, {}).get("location", "—")
-        breakdown.append({
-            "name": name,
-            "location": loc,
-            "is_global": is_global,
-            **counts,
-        })
+        is_global = name == GLOBAL_NSG_LABEL
+        loc = (
+            "Cross-NSG / Tenant-level checks (see table)"
+            if is_global
+            else nsg_map.get(name, {}).get("location", "—")
+        )
+        breakdown.append(
+            {
+                "name": name,
+                "location": loc,
+                "is_global": is_global,
+                **counts,
+            }
+        )
     breakdown.sort(key=lambda x: (0 if x["is_global"] else 1, -x["fail"]))
     return breakdown
 
@@ -84,7 +95,11 @@ def _render_html(
     summary = _gather_summary(results)
     total_rules = sum(len(nsg.security_rules) for nsg in (nsgs or []))
 
-    summary_pfm = {"pass": summary["pass"], "fail": summary["fail"], "manual": summary["manual"]}
+    summary_pfm = {
+        "pass": summary["pass"],
+        "fail": summary["fail"],
+        "manual": summary["manual"],
+    }
 
     try:
         chart_donut = donut_chart(summary_pfm)
@@ -133,6 +148,7 @@ def generate_pdf_report(
 ) -> str:
     html = _render_html(results, llm_narrative, nsgs, template_name="report_pdf.html")
     from weasyprint import HTML
+
     output_path = Path(output_path)
     HTML(string=html).write_pdf(str(output_path))
     return str(output_path)

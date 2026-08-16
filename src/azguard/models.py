@@ -36,11 +36,11 @@ class SecurityRule(BaseModel):
     destination_port_range: str | None = None
     description: str | None = None
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     @classmethod
     def _flatten_properties(cls, data: dict) -> dict:
-        if isinstance(data, dict) and 'properties' in data:
-            props = data.pop('properties')
+        if isinstance(data, dict) and "properties" in data:
+            props = data.pop("properties")
             data.update(props)
         return data
 
@@ -71,11 +71,11 @@ class NetworkSecurityGroup(BaseModel):
     subnets: list[Subnet] = []
     network_interfaces: list[NicAssociation] = []
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     @classmethod
     def _flatten_properties(cls, data: dict) -> dict:
-        if isinstance(data, dict) and 'properties' in data:
-            props = data.pop('properties')
+        if isinstance(data, dict) and "properties" in data:
+            props = data.pop("properties")
             data.update(props)
         return data
 
@@ -95,11 +95,11 @@ class FlowLog(BaseModel):
     enabled: bool
     retention_policy: RetentionPolicy | None = None
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     @classmethod
     def _flatten_properties(cls, data: dict) -> dict:
-        if isinstance(data, dict) and 'properties' in data:
-            props = data.pop('properties')
+        if isinstance(data, dict) and "properties" in data:
+            props = data.pop("properties")
             data.update(props)
         return data
 

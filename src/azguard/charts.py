@@ -2,12 +2,18 @@ import base64
 from io import BytesIO
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
-STATUS_COLORS = {"pass": "#27ae60", "fail": "#c0392b", "manual": "#d68910"}
-SEV_COLORS = {"Critical": "#6c3483", "High": "#c0392b", "Medium": "#d68910", "Low": "#7d8a2e"}
+STATUS_COLORS = {"pass": "#1e8e5a", "fail": "#c43d32", "manual": "#b06a1f"}
+SEV_COLORS = {
+    "Critical": "#1f3864",
+    "High": "#3b5b8f",
+    "Medium": "#6d8bb5",
+    "Low": "#9fb3cf",
+}
 SEVERITY_ORDER = ["Critical", "High", "Medium", "Low"]
 
 
@@ -33,7 +39,9 @@ def donut_fig(summary: dict) -> plt.Figure:
 
     if not sizes:
         fig, ax = plt.subplots(figsize=(2.5, 2.5))
-        ax.text(0.5, 0.5, "No data", ha="center", va="center", fontsize=12, color="#999")
+        ax.text(
+            0.5, 0.5, "No data", ha="center", va="center", fontsize=12, color="#999"
+        )
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.axis("off")
@@ -50,11 +58,27 @@ def donut_fig(summary: dict) -> plt.Figure:
     centre_circle = plt.Circle((0, 0), 0.55, fc="white")
     ax.add_artist(centre_circle)
     total = sum(sizes)
-    ax.text(0, 0, str(total), ha="center", va="center", fontsize=20, fontweight="bold", color="#2c3e50")
+    ax.text(
+        0,
+        0,
+        str(total),
+        ha="center",
+        va="center",
+        fontsize=20,
+        fontweight="bold",
+        color="#2c3e50",
+    )
     ax.text(0, -0.18, "total", ha="center", va="center", fontsize=8, color="#7f8c8d")
     ax.axis("equal")
     legend_labels = [f"{label} ({s})" for label, s in zip(labels, sizes)]
-    ax.legend(wedges, legend_labels, loc="center left", bbox_to_anchor=(1, 0.5), frameon=False, fontsize=8)
+    ax.legend(
+        wedges,
+        legend_labels,
+        loc="center left",
+        bbox_to_anchor=(1, 0.5),
+        frameon=False,
+        fontsize=8,
+    )
     return fig
 
 
@@ -75,20 +99,28 @@ def severity_bar_fig(by_severity: dict) -> plt.Figure:
 
     if not values:
         fig, ax = plt.subplots(figsize=(4, 1.5))
-        ax.text(0.5, 0.5, "No data", ha="center", va="center", fontsize=10, color="#999")
+        ax.text(
+            0.5, 0.5, "No data", ha="center", va="center", fontsize=10, color="#999"
+        )
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.axis("off")
         return fig
 
     fig, ax = plt.subplots(figsize=(4, 1.6))
-    bars = ax.barh(labels, values, color=colors, height=0.55, edgecolor="white", linewidth=1)
+    bars = ax.barh(
+        labels, values, color=colors, height=0.55, edgecolor="white", linewidth=1
+    )
     for bar, val in zip(bars, values):
         ax.text(
             bar.get_width() + max(values) * 0.02,
             bar.get_y() + bar.get_height() / 2,
             str(val),
-            ha="left", va="center", fontsize=10, fontweight="bold", color="#333",
+            ha="left",
+            va="center",
+            fontsize=10,
+            fontweight="bold",
+            color="#333",
         )
     ax.set_xlim(0, max(values) * 1.25 if values else 1)
     ax.tick_params(axis="y", labelsize=10)

@@ -39,14 +39,16 @@ def findings_to_json(results: list[CheckResult]) -> str:
     sorted_results = sorted(results, key=_severity_sort_key)
     findings_list: list[dict[str, Any]] = []
     for r in sorted_results:
-        findings_list.append({
-            "control_id": r.control_id,
-            "status": r.status,
-            "severity": r.severity,
-            "nsg": r.nsg_name,
-            "rule": r.rule_name,
-            "evidence": r.evidence,
-        })
+        findings_list.append(
+            {
+                "control_id": r.control_id,
+                "status": r.status,
+                "severity": r.severity,
+                "nsg": r.nsg_name,
+                "rule": r.rule_name,
+                "evidence": r.evidence,
+            }
+        )
     summary = {
         "total_findings": len(findings_list),
         "by_severity": {

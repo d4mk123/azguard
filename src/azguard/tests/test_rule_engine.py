@@ -60,7 +60,11 @@ def test_violation_nsg_has_https_fail():
 def test_clean_nsg_no_internet_exposure():
     nsgs = collect("clean-nsg.json")
     results = run_engine(nsgs)
-    internet_fails = [r for r in results if r.status == "fail" and r.control_id in {"7.1", "7.2", "7.3", "7.4"}]
+    internet_fails = [
+        r
+        for r in results
+        if r.status == "fail" and r.control_id in {"7.1", "7.2", "7.3", "7.4"}
+    ]
     assert len(internet_fails) == 0
 
 
@@ -137,7 +141,9 @@ def test_stub_checks_return_manual():
     ]
     for stub in stubs:
         results = stub(nsgs)
-        assert all(r.status == "manual" for r in results), f"{stub.__name__} did not return manual"
+        assert all(r.status == "manual" for r in results), (
+            f"{stub.__name__} did not return manual"
+        )
 
 
 def test_nsg_flow_log_retention_pass():
@@ -195,7 +201,9 @@ def test_ipv6_rules_no_crash():
 def test_ipv6_rules_not_falsely_flagged_as_internet():
     nsgs = collect("ipv6-rules.json")
     results = run_engine(nsgs)
-    rdp_ssh_fails = [r for r in results if r.control_id in ("7.1", "7.2") and r.status == "fail"]
+    rdp_ssh_fails = [
+        r for r in results if r.control_id in ("7.1", "7.2") and r.status == "fail"
+    ]
     assert len(rdp_ssh_fails) == 0
 
 

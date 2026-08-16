@@ -5,262 +5,152 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AzGuard — Azure NSG Compliance Report</title>
 <style>
-/* ═══════════════════════════════════════════════════
-   RESET & BASE
-   ═══════════════════════════════════════════════════ */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  color: #2c3e50;
-  background: #f0f2f5;
+  font-family: 'Ubuntu Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: #23272e;
+  background: #ffffff;
   line-height: 1.6;
   font-size: 14px;
 }
 
-/* ═══════════════════════════════════════════════════
-   PDF PAGE SETUP
-   ═══════════════════════════════════════════════════ */
 @page {
   size: A4;
   margin: 2.2cm 2cm 2.5cm 2cm;
   @bottom-center {
     content: "AzGuard  |  Page " counter(page) " of " counter(pages);
     font-size: 9px;
-    color: #95a5a6;
-    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    color: #9aa2ad;
+    font-family: 'Ubuntu Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   }
 }
+@page:first { @bottom-center { content: none; } }
 
-@page:first {
-  @bottom-center { content: none; }
-}
+.container { max-width: 1100px; margin: 0 auto; }
 
-/* ═══════════════════════════════════════════════════
-   LAYOUT
-   ═══════════════════════════════════════════════════ */
-.container { max-width: 1200px; margin: 0 auto; }
-
-/* ═══════════════════════════════════════════════════
-   COVER PAGE
-   ═══════════════════════════════════════════════════ */
+/* Cover */
 .cover {
   display: flex; flex-direction: column; justify-content: center;
   min-height: 90vh; text-align: center;
   page-break-after: always;
 }
-.cover-badge {
-  display: inline-block; margin: 0 auto 20px;
-  background: #1a2332; color: #fff;
-  padding: 6px 18px; border-radius: 20px;
-  font-size: 11px; font-weight: 600; letter-spacing: 1px;
-  text-transform: uppercase;
+.cover .org {
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: #7b8590; margin-bottom: 18px;
 }
-.cover h1 {
-  font-size: 42px; font-weight: 800; color: #1a2332;
-  letter-spacing: -1px; line-height: 1.1;
-}
-.cover h1 span { color: #4a6fa5; }
-.cover .subtitle {
-  font-size: 18px; color: #7f8c8d; margin-top: 8px;
-  font-weight: 400;
-}
-.cover-accent {
-  width: 60px; height: 4px; background: #4a6fa5;
-  margin: 24px auto; border-radius: 2px;
-}
-.cover-meta {
-  display: flex; justify-content: center; gap: 36px;
-  margin-top: 12px; font-size: 14px; color: #576574;
-  flex-wrap: wrap;
-}
-.cover-meta-item { text-align: center; }
-.cover-meta-item .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #95a5a6; }
-.cover-meta-item .value { font-size: 18px; font-weight: 700; color: #1a2332; }
-.cover-footer {
-  margin-top: 48px; font-size: 11px; color: #95a5a6;
-}
+.cover h1 { font-size: 44px; font-weight: 700; color: #1d232b; letter-spacing: -0.5px; }
+.cover .subtitle { font-size: 17px; color: #5b6470; margin-top: 6px; }
+.cover-accent { width: 56px; height: 3px; background: #1f3864; margin: 26px auto; }
+.cover-meta { display: flex; justify-content: center; gap: 48px; margin-top: 10px; flex-wrap: wrap; }
+.cover-meta-item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #9aa2ad; }
+.cover-meta-item .value { font-size: 20px; font-weight: 600; color: #1d232b; }
+.cover-footer { margin-top: 44px; font-size: 11px; color: #9aa2ad; }
 
-/* ═══════════════════════════════════════════════════
-   TABLE OF CONTENTS
-   ═══════════════════════════════════════════════════ */
-.toc {
-  page-break-after: always;
-  padding: 20px 0;
-}
-.toc h2 { font-size: 20px; font-weight: 700; color: #1a2332; margin-bottom: 20px; }
+/* Table of contents */
+.toc { page-break-after: always; padding: 20px 0; }
+.toc h2 { font-size: 20px; font-weight: 600; color: #1d232b; margin-bottom: 18px; }
 .toc-list { list-style: none; }
 .toc-list li {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 0; border-bottom: 1px dashed #dce1e6;
-  font-size: 14px; color: #2c3e50;
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 0; border-bottom: 1px solid #e6e9ed;
+  font-size: 14px; color: #2b3138;
 }
 .toc-list li .num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: #f0f2f5; display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: #4a6fa5; flex-shrink: 0;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #eef1f4; color: #1f3864;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; flex-shrink: 0;
 }
-.toc-list li .icon { font-size: 16px; flex-shrink: 0; }
 
-/* ═══════════════════════════════════════════════════
-   SECTION HEADERS
-   ═══════════════════════════════════════════════════ */
+/* Sections */
 .section {
-  background: #fff; border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  margin: 20px 0;
-  page-break-inside: avoid;
+  background: #ffffff; border: 1px solid #e6e9ed; border-radius: 6px;
+  margin: 20px 0; page-break-inside: avoid;
 }
-.section-header {
-  padding: 20px 28px 0; font-size: 17px; font-weight: 700;
-  color: #1a2332; display: flex; align-items: center; gap: 10px;
-}
-.section-header .icon { font-size: 18px; }
-.section-body { padding: 16px 28px 28px; }
-
+.section-header { padding: 18px 24px 0; font-size: 16px; font-weight: 600; color: #1d232b; }
+.section-header .rule { display: block; width: 28px; height: 3px; background: #1f3864; margin-top: 6px; }
+.section-body { padding: 14px 24px 24px; }
 .page-break { page-break-before: always; }
 
-/* ═══════════════════════════════════════════════════
-   STAT TILES
-   ═══════════════════════════════════════════════════ */
+/* Stat tiles */
 .tile-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 14px; margin: 4px 0;
+  gap: 12px; margin: 6px 0;
 }
 .tile {
-  border-radius: 10px; padding: 20px 16px; color: #fff;
+  border: 1px solid #e6e9ed; border-top: 3px solid #b9c0c9;
+  background: #fbfcfd; padding: 16px; border-radius: 4px;
 }
-.tile .tile-number { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
-.tile .tile-icon { font-size: 22px; margin-bottom: 8px; opacity: 0.9; }
-.tile .tile-label {
-  font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
-  opacity: 0.8; margin-top: 2px;
-}
-.bg-total  { background: linear-gradient(135deg, #2c5282, #4a6fa5); }
-.bg-pass   { background: linear-gradient(135deg, #1e8449, #27ae60); }
-.bg-fail   { background: linear-gradient(135deg, #a93226, #c0392b); }
-.bg-manual { background: linear-gradient(135deg, #b7950b, #d68910); }
+.tile.border-total { border-top-color: #1f3864; }
+.tile.border-pass { border-top-color: #1e8e5a; }
+.tile.border-fail { border-top-color: #c43d32; }
+.tile.border-manual { border-top-color: #b06a1f; }
+.tile .tile-number { font-size: 30px; font-weight: 600; color: #1d232b; line-height: 1.1; }
+.tile .tile-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #7b8590; margin-top: 4px; }
 
-/* ═══════════════════════════════════════════════════
-   CHARTS
-   ═══════════════════════════════════════════════════ */
-.chart-row {
-  display: flex; gap: 20px; align-items: center;
-  flex-wrap: wrap; margin-top: 16px;
-}
+/* Charts */
+.chart-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
 .chart-img { max-width: 100%; height: auto; }
 
-/* ═══════════════════════════════════════════════════
-   PER-NSG CARDS
-   ═══════════════════════════════════════════════════ */
-.nsg-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px;
-}
+/* Per-NSG cards */
+.nsg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
 .nsg-card {
-  border: 1px solid #dce1e6; border-radius: 8px; padding: 16px;
-  border-left: 4px solid #bdc3c7;
+  border: 1px solid #e6e9ed; border-left: 3px solid #b9c0c9;
+  border-radius: 4px; padding: 14px;
 }
-.nsg-card.pass-heavy { border-left-color: #27ae60; }
-.nsg-card.fail-heavy { border-left-color: #c0392b; }
-.nsg-card.mix { border-left-color: #d68910; }
-.nsg-card.global-card { border-left-color: #4a6fa5; background: #f8f9fa; }
-.nsg-card h4 { font-size: 14px; font-weight: 700; color: #1a2332; }
-.nsg-card .nsg-loc { font-size: 11px; color: #95a5a6; margin-top: 2px; }
+.nsg-card.global-card { border-left-color: #1f3864; background: #fafbfc; }
+.nsg-card.fail-heavy { border-left-color: #c43d32; }
+.nsg-card.pass-heavy { border-left-color: #1e8e5a; }
+.nsg-card.mix { border-left-color: #b06a1f; }
+.nsg-card h4 { font-size: 13px; font-weight: 600; color: #1d232b; }
+.nsg-card .nsg-loc { font-size: 11px; color: #7b8590; margin-top: 2px; }
 .nsg-card .nsg-stats { display: flex; gap: 8px; margin: 10px 0; font-size: 12px; }
-.nsg-card .nsg-stats span { padding: 2px 10px; border-radius: 4px; font-weight: 600; }
-.nsg-card .nsg-pass-count { background: #eafaf1; color: #27ae60; }
-.nsg-card .nsg-fail-count { background: #fdedec; color: #c0392b; }
-.nsg-card .nsg-manual-count { background: #fef9e7; color: #d68910; }
-.nsg-card .nsg-top-issue { font-size: 12px; color: #7f8c8d; margin-top: 6px; }
+.nsg-card .nsg-stats span { padding: 2px 8px; border-radius: 3px; font-weight: 600; }
+.nsg-pass-count { background: #e8f5ee; color: #1e8e5a; }
+.nsg-fail-count { background: #fbeae9; color: #c43d32; }
+.nsg-manual-count { background: #f6eddf; color: #b06a1f; }
+.nsg-card .nsg-top-issue { font-size: 12px; color: #5b6470; margin-top: 6px; }
 
-/* ═══════════════════════════════════════════════════
-   TABLE
-   ═══════════════════════════════════════════════════ */
+/* Tables */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead th {
-  background: #f4f5f7; font-weight: 700; font-size: 11px;
-  text-transform: uppercase; letter-spacing: 0.4px; color: #7f8c8d;
-  padding: 12px 10px; border-bottom: 2px solid #dce1e6;
-  white-space: nowrap;
+  background: #f4f6f8; font-weight: 600; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.6px; color: #7b8590;
+  padding: 10px; border-bottom: 1px solid #dde2e7; white-space: nowrap;
 }
-tbody td { padding: 10px; border-bottom: 1px solid #eef0f3; vertical-align: top; }
-tbody tr:nth-child(even) { background: #f9fafb; }
-tr.row-fail { border-left: 3px solid #c0392b; }
-tr.row-pass { border-left: 3px solid #27ae60; }
-tr.row-manual { border-left: 3px solid #d68910; }
+tbody td { padding: 9px 10px; border-bottom: 1px solid #edf0f3; vertical-align: top; }
+tbody tr:nth-child(even) { background: #fafbfc; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.badge-pass { background: #e8f5ee; color: #1e8e5a; }
+.badge-fail { background: #fbeae9; color: #c43d32; }
+.badge-manual { background: #f6eddf; color: #b06a1f; }
+.severity { font-weight: 600; color: #4b5560; }
+.evidence { font-size: 12px; color: #4b5560; line-height: 1.5; }
+h4.subheading { font-size: 12px; font-weight: 600; color: #7b8590; text-transform: uppercase; letter-spacing: 0.6px; margin: 22px 0 8px; }
 
-.badge {
-  display: inline-block; padding: 2px 10px; border-radius: 4px;
-  font-size: 11px; font-weight: 700; color: #fff;
-}
-.badge-pass   { background: #27ae60; }
-.badge-fail   { background: #c0392b; }
-.badge-manual { background: #d68910; }
-.badge-critical { background: #6c3483; }
-.badge-high    { background: #c0392b; }
-.badge-medium  { background: #d68910; }
-.badge-low     { background: #7d8a2e; }
-
-.evidence { font-size: 12px; color: #576574; line-height: 1.5; }
-
-/* ═══════════════════════════════════════════════════
-   ANOMALY CARDS
-   ═══════════════════════════════════════════════════ */
+/* Anomalies */
 .anomaly-card {
-  background: #f8f5fc;
-  border: 1px solid #e1d5ed; border-left: 4px solid #6c3483;
-  border-radius: 8px; padding: 16px 20px; margin: 10px 0;
+  border: 1px solid #e6e9ed; border-left: 3px solid #1f3864;
+  border-radius: 4px; background: #fafbfc; padding: 14px 18px; margin: 10px 0;
 }
-.anomaly-card .title { font-size: 14px; font-weight: 700; color: #4a235a; }
-.anomaly-card .nsg-label { font-size: 11px; color: #6c3483; opacity: 0.7; }
-.anomaly-card .desc { font-size: 13px; color: #2c3e50; margin-top: 4px; }
+.anomaly-card .title { font-size: 13px; font-weight: 600; color: #1d232b; }
+.anomaly-card .nsg-label { font-size: 11px; color: #7b8590; margin-top: 2px; }
+.anomaly-card .desc { font-size: 13px; color: #3a414a; margin-top: 4px; }
 
-/* ═══════════════════════════════════════════════════
-   NARRATIVE
-   ═══════════════════════════════════════════════════ */
+/* Narrative */
 .narrative-box {
-  background: #f8f9fa; border: 1px solid #dce1e6;
-  border-radius: 8px; padding: 24px 28px;
-  line-height: 1.7; font-size: 13px; color: #2c3e50;
+  border: 1px solid #e6e9ed; border-radius: 4px; background: #fbfcfd;
+  padding: 20px 24px; line-height: 1.7; font-size: 13px; color: #2b3138;
   white-space: pre-wrap;
 }
 
-/* ═══════════════════════════════════════════════════
-   FOOTER
-   ═══════════════════════════════════════════════════ */
-.page-footer {
-  text-align: center; color: #95a5a6; font-size: 11px;
-  padding: 32px 0 16px;
-}
+/* Footer */
+.page-footer { text-align: center; color: #9aa2ad; font-size: 11px; padding: 28px 0 12px; }
 
-/* ═══════════════════════════════════════════════════
-   RESPONSIVE (screen only)
-   ═══════════════════════════════════════════════════ */
-@media screen and (max-width: 768px) {
-  body { background: #fff; }
-  .cover { min-height: auto; padding: 60px 20px; }
-  .cover h1 { font-size: 28px; }
-  .cover .subtitle { font-size: 15px; }
-  .cover-meta { gap: 20px; }
-  .section { margin: 12px 0; border-radius: 0; }
-  .section-header { padding: 16px 16px 0; font-size: 15px; }
-  .section-body { padding: 12px 16px 20px; }
-  .tile-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .tile { padding: 14px 12px; }
-  .tile .tile-number { font-size: 26px; }
-  .chart-row { flex-direction: column; align-items: flex-start; }
-  .nsg-grid { grid-template-columns: 1fr; }
-  thead th, tbody td { padding: 8px 6px; font-size: 12px; }
-}
-
-/* ═══════════════════════════════════════════════════
-   PRINT/PDF — hide screen-only elements
-   ═══════════════════════════════════════════════════ */
 @media print {
-  body { background: #fff; color: #000; }
-  .section { box-shadow: none; border: 1px solid #dce1e6; }
+  body { background: #ffffff; color: #000; }
   .cover { min-height: 100vh; }
 }
 </style>
@@ -269,13 +159,11 @@ tr.row-manual { border-left: 3px solid #d68910; }
 
 <div class="container">
 
-  <!-- ═══════════════════════════════════════════════
-       COVER PAGE
-       ═══════════════════════════════════════════════ -->
+  <!-- Cover -->
   <div class="cover">
-    <div class="cover-badge">Security Compliance</div>
-    <h1>Az<span>Guardian</span></h1>
-    <div class="subtitle">Azure Network Security Group Compliance Report</div>
+    <div class="org">Security Compliance Report</div>
+    <h1>AzGuardian</h1>
+    <div class="subtitle">Azure Network Security Group Compliance</div>
     <div class="cover-accent"></div>
     <div class="cover-meta">
       <div class="cover-meta-item">
@@ -300,45 +188,37 @@ tr.row-manual { border-left: 3px solid #d68910; }
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       TABLE OF CONTENTS
-       ═══════════════════════════════════════════════ -->
+  <!-- Table of contents -->
   <div class="toc">
     <h2>Table of Contents</h2>
     <ul class="toc-list">
-      <li><span class="num">1</span><span class="icon">&#128202;</span> Executive Summary</li>
-      <li><span class="num">2</span><span class="icon">&#127903;</span> Per-NSG Breakdown</li>
-      <li><span class="num">3</span><span class="icon">&#128196;</span> Findings Detail</li>
-      <li><span class="num">4</span><span class="icon">&#128300;</span> Anomaly Detection</li>
-      <li><span class="num">5</span><span class="icon">&#128172;</span> AI-Generated Narrative</li>
+      <li><span class="num">1</span> Executive Summary</li>
+      <li><span class="num">2</span> Per-NSG Breakdown</li>
+      <li><span class="num">3</span> Findings Detail</li>
+      <li><span class="num">4</span> Anomaly Detection</li>
+      <li><span class="num">5</span> AI-Generated Narrative</li>
     </ul>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       1. EXECUTIVE SUMMARY
-       ═══════════════════════════════════════════════ -->
+  <!-- 1. Executive Summary -->
   <div class="section page-break">
-    <div class="section-header"><span class="icon">&#128202;</span> 1. Executive Summary</div>
+    <div class="section-header">1. Executive Summary<span class="rule"></span></div>
     <div class="section-body">
 
       <div class="tile-grid">
-        <div class="tile bg-total">
-          <div class="tile-icon">&#128202;</div>
+        <div class="tile border-total">
           <div class="tile-number">{{ summary.total }}</div>
           <div class="tile-label">Total Checks</div>
         </div>
-        <div class="tile bg-pass">
-          <div class="tile-icon">&#10004;</div>
+        <div class="tile border-pass">
           <div class="tile-number">{{ summary.pass }}</div>
           <div class="tile-label">Passed</div>
         </div>
-        <div class="tile bg-fail">
-          <div class="tile-icon">&#10060;</div>
+        <div class="tile border-fail">
           <div class="tile-number">{{ summary.fail }}</div>
           <div class="tile-label">Failed</div>
         </div>
-        <div class="tile bg-manual">
-          <div class="tile-icon">&#128269;</div>
+        <div class="tile border-manual">
           <div class="tile-number">{{ summary.manual }}</div>
           <div class="tile-label">Manual Check</div>
         </div>
@@ -347,10 +227,10 @@ tr.row-manual { border-left: 3px solid #d68910; }
       {% if chart_donut or chart_severity %}
       <div class="chart-row">
         {% if chart_donut %}
-        <img src="{{ chart_donut }}" alt="Pass/Fail Distribution" class="chart-img" style="width:200px;">
+        <img src="{{ chart_donut }}" alt="Pass/Fail distribution" class="chart-img" style="width:200px;">
         {% endif %}
         {% if chart_severity %}
-        <img src="{{ chart_severity }}" alt="Severity Distribution" class="chart-img" style="width:340px;">
+        <img src="{{ chart_severity }}" alt="Severity distribution" class="chart-img" style="width:340px;">
         {% endif %}
       </div>
       {% endif %}
@@ -358,12 +238,10 @@ tr.row-manual { border-left: 3px solid #d68910; }
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       2. PER-NSG BREAKDOWN
-       ═══════════════════════════════════════════════ -->
+  <!-- 2. Per-NSG Breakdown -->
   {% if nsg_breakdown %}
   <div class="section">
-    <div class="section-header"><span class="icon">&#127903;</span> 2. Per-NSG Breakdown</div>
+    <div class="section-header">2. Per-NSG Breakdown<span class="rule"></span></div>
     <div class="section-body">
       <div class="nsg-grid">
         {% for nsg in nsg_breakdown %}
@@ -371,12 +249,12 @@ tr.row-manual { border-left: 3px solid #d68910; }
           <h4>{{ nsg.name }}</h4>
           <div class="nsg-loc">{{ nsg.location }}</div>
           <div class="nsg-stats">
-            <span class="nsg-pass-count">&#10004; {{ nsg.pass }}</span>
-            {% if nsg.fail > 0 %}<span class="nsg-fail-count">&#10060; {{ nsg.fail }}</span>{% endif %}
-            {% if nsg.manual > 0 %}<span class="nsg-manual-count">&#128269; {{ nsg.manual }}</span>{% endif %}
+            <span class="nsg-pass-count">Pass {{ nsg.pass }}</span>
+            {% if nsg.fail > 0 %}<span class="nsg-fail-count">Fail {{ nsg.fail }}</span>{% endif %}
+            {% if nsg.manual > 0 %}<span class="nsg-manual-count">Manual {{ nsg.manual }}</span>{% endif %}
           </div>
           {% if nsg.top_issue %}
-          <div class="nsg-top-issue">&#9888; {{ nsg.top_issue }}</div>
+          <div class="nsg-top-issue">{{ nsg.top_issue }}</div>
           {% endif %}
         </div>
         {% endfor %}
@@ -385,45 +263,17 @@ tr.row-manual { border-left: 3px solid #d68910; }
   </div>
   {% endif %}
 
-  <!-- ═══════════════════════════════════════════════
-       3. FINDINGS DETAIL
-       ═══════════════════════════════════════════════ -->
+  <!-- 3. Findings Detail -->
   <div class="section">
-    <div class="section-header"><span class="icon">&#128196;</span> 3. Findings Detail</div>
+    <div class="section-header">3. Findings Detail<span class="rule"></span></div>
     <div class="section-body">
 
       {% if findings %}
-      <table>
-        <thead>
-          <tr>
-            <th>Control</th>
-            <th>Status</th>
-            <th>Severity</th>
-            <th>NSG</th>
-            <th>Rule</th>
-            <th>Evidence</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for f in findings %}
-          <tr class="row-{{ f.status }}">
-            <td><strong>{{ f.control_id }}</strong></td>
-            <td><span class="badge badge-{{ f.status }}">{{ f.status }}</span></td>
-            <td><span class="badge badge-{{ f.severity|lower }}">{{ f.severity }}</span></td>
-            <td>{{ f.nsg_name }}</td>
-            <td>{{ f.rule_name if f.rule_name else '—' }}</td>
-            <td class="evidence">{{ f.evidence }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% endif %}
-
-      {% if findings_extra %}
-        <h4 style="margin:24px 0 8px;font-size:14px;color:#7f8c8d;">Additional Checks</h4>
+      <div class="table-wrap">
         <table>
           <thead>
             <tr>
+              <th>Control</th>
               <th>Status</th>
               <th>Severity</th>
               <th>NSG</th>
@@ -432,10 +282,11 @@ tr.row-manual { border-left: 3px solid #d68910; }
             </tr>
           </thead>
           <tbody>
-            {% for f in findings_extra %}
-            <tr class="row-{{ f.status }}">
+            {% for f in findings %}
+            <tr>
+              <td>{{ f.control_id }}</td>
               <td><span class="badge badge-{{ f.status }}">{{ f.status }}</span></td>
-              <td><span class="badge badge-{{ f.severity|lower }}">{{ f.severity }}</span></td>
+              <td class="severity">{{ f.severity }}</td>
               <td>{{ f.nsg_name }}</td>
               <td>{{ f.rule_name if f.rule_name else '—' }}</td>
               <td class="evidence">{{ f.evidence }}</td>
@@ -443,16 +294,43 @@ tr.row-manual { border-left: 3px solid #d68910; }
             {% endfor %}
           </tbody>
         </table>
+      </div>
+      {% endif %}
+
+      {% if findings_extra %}
+        <h4 class="subheading">Additional Checks</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Severity</th>
+                <th>NSG</th>
+                <th>Rule</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for f in findings_extra %}
+              <tr>
+                <td><span class="badge badge-{{ f.status }}">{{ f.status }}</span></td>
+                <td class="severity">{{ f.severity }}</td>
+                <td>{{ f.nsg_name }}</td>
+                <td>{{ f.rule_name if f.rule_name else '—' }}</td>
+                <td class="evidence">{{ f.evidence }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       {% endif %}
 
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       4. ANOMALY DETECTION
-       ═══════════════════════════════════════════════ -->
+  <!-- 4. Anomaly Detection -->
   <div class="section page-break">
-    <div class="section-header"><span class="icon">&#128300;</span> 4. Anomaly Detection</div>
+    <div class="section-header">4. Anomaly Detection<span class="rule"></span></div>
     <div class="section-body">
       {% if anomalies %}
         {% for a in anomalies %}
@@ -463,24 +341,20 @@ tr.row-manual { border-left: 3px solid #d68910; }
         </div>
         {% endfor %}
       {% else %}
-        <p style="color:#7f8c8d;font-size:13px;">No anomalous rules were detected across the scanned NSGs.</p>
+        <p style="color:#7b8590;font-size:13px;">No anomalous rules were detected across the scanned NSGs.</p>
       {% endif %}
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       5. AI-GENERATED NARRATIVE
-       ═══════════════════════════════════════════════ -->
+  <!-- 5. AI-Generated Narrative -->
   <div class="section">
-    <div class="section-header"><span class="icon">&#128172;</span> 5. AI-Generated Narrative</div>
+    <div class="section-header">5. AI-Generated Narrative<span class="rule"></span></div>
     <div class="section-body">
       <div class="narrative-box">{{ llm_narrative }}</div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       FOOTER
-       ═══════════════════════════════════════════════ -->
+  <!-- Footer -->
   <div class="page-footer">
     Generated by AzGuard &mdash; CIS Microsoft Azure Foundations Benchmark v3.0.0
   </div>

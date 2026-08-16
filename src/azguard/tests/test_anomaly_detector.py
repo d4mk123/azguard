@@ -54,6 +54,7 @@ def test_empty_nsg_no_anomalies():
 
 # === ML-specific tests ===
 
+
 def test_ml_skipped_for_small_nsg():
     """NSGs with fewer than 8 rules should skip ML detection"""
     nsgs = collect("shadowed-rules.json")

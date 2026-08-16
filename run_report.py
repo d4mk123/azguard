@@ -9,7 +9,9 @@ FIXTURE_PATH = Path("test-data/violation-nsg.json")
 FLOW_LOG_PATH = Path("test-data/flow-logs.json")
 
 nsgs = collect_from_file(str(FIXTURE_PATH))
-flow_logs = collect_flow_logs_from_file(str(FLOW_LOG_PATH)) if FLOW_LOG_PATH.exists() else None
+flow_logs = (
+    collect_flow_logs_from_file(str(FLOW_LOG_PATH)) if FLOW_LOG_PATH.exists() else None
+)
 results = run_engine(nsgs, flow_logs)
 results += run_anomaly_detection(nsgs)
 
@@ -17,6 +19,7 @@ print(f"Loaded {len(nsgs)} NSG(s), {len(results)} checks/anomalies")
 
 try:
     from azguard.llm_report_writer import generate_report
+
     narrative = generate_report(results, model_name="llama3.2:3b")
     print("LLM narrative generated.")
 except Exception as e:

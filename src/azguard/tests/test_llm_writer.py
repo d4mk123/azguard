@@ -6,18 +6,38 @@ from azguard.rule_engine import CheckResult
 
 def _sample_results() -> list[CheckResult]:
     return [
-        CheckResult(control_id="7.1", status="fail", severity="Critical",
-                     nsg_name="web-nsg", rule_name="RDP",
-                     evidence="RDP exposed to internet."),
-        CheckResult(control_id="7.5", status="pass", severity="High",
-                     nsg_name="web-nsg", rule_name=None,
-                     evidence="Flow log retention >= 90 days."),
-        CheckResult(control_id="ANOMALY", status="fail", severity="Medium",
-                     nsg_name="data-nsg", rule_name="WeirdRule",
-                     evidence="Rule is statistically unusual."),
-        CheckResult(control_id="6.1.1.5", status="manual", severity="Medium",
-                     nsg_name="N/A", rule_name=None,
-                     evidence="Manual verification required."),
+        CheckResult(
+            control_id="7.1",
+            status="fail",
+            severity="Critical",
+            nsg_name="web-nsg",
+            rule_name="RDP",
+            evidence="RDP exposed to internet.",
+        ),
+        CheckResult(
+            control_id="7.5",
+            status="pass",
+            severity="High",
+            nsg_name="web-nsg",
+            rule_name=None,
+            evidence="Flow log retention >= 90 days.",
+        ),
+        CheckResult(
+            control_id="ANOMALY",
+            status="fail",
+            severity="Medium",
+            nsg_name="data-nsg",
+            rule_name="WeirdRule",
+            evidence="Rule is statistically unusual.",
+        ),
+        CheckResult(
+            control_id="6.1.1.5",
+            status="manual",
+            severity="Medium",
+            nsg_name="N/A",
+            rule_name=None,
+            evidence="Manual verification required.",
+        ),
     ]
 
 
