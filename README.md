@@ -288,7 +288,7 @@ The suite covers the rule engine, anomaly detector, collectors, report generatio
 
 ---
 
-## Validation methodology (Day 17)
+## Validation methodology
 
 azguard findings are validated against Microsoft Defender for Cloud's CIS v2.0.0 regulatory compliance results on an intentionally misconfigured live environment provisioned via `terraform/`. See `validation/README.md` for the comparison procedure and control-ID mapping.
 

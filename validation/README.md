@@ -1,4 +1,4 @@
-# Live Azure Validation (Day 17)
+# Live Azure Validation
 
 This directory holds the tooling that validates azguard against a live Azure
 environment and Microsoft Defender for Cloud's CIS regulatory compliance

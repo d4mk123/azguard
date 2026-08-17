@@ -252,7 +252,7 @@ def check_missing_deny_all(nsgs):
 
 # Note: This only flags NSGs with empty subnet lists.
 # Subnets with no NSG at all (orphaned subnets) cannot be detected
-# without VNet data — see Day 17 for VNet collector
+# without VNet data — a future VNet collector would enable this check.
 
 
 def check_subnet_association(nsgs):
